@@ -1,4 +1,5 @@
 using FluentUI.Components;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 namespace FluentUI
 {
@@ -12,6 +13,9 @@ namespace FluentUI
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            builder.Services.AddHttpClient();
+            builder.Services.AddFluentUIComponents();
 
             var app = builder.Build();
 
