@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/CustomComponents.AppHost/CustomComponents.AppHost.csproj" Id="fc3d28f6-2b6c-4b96-815a-15b8b81dcabd" />
+  <Project Path="src/CustomComponents.ServiceDefaults/CustomComponents.ServiceDefaults.csproj" />
+  <Project Path="src/FluentUI/FluentUI.csproj" Id="ab273ba9-b746-4799-a19e-09f9c280587f" />
+</Solution>
