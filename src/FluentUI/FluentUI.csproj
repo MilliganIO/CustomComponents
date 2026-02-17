@@ -17,4 +17,9 @@
     <ProjectReference Include="..\CustomComponents.ServiceDefaults\CustomComponents.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\UI\Tables\Models\" />
+    <Folder Include="wwwroot\lib\" />
+  </ItemGroup>
+
 </Project>

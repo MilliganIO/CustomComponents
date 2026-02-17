@@ -1,0 +1,18 @@
+﻿@page "/tables"
+
+<h3>Tables</h3>
+
+@code {
+	List<Models.Message> messages = new();
+	protected override void OnInitialized()
+	{
+		Random random = new();
+		messages = Enumerable.Range(1, 200).Select(m => new Models.Message
+		{
+			IsImportant = m % 2 == 0,
+			Body = $"Sample message here {1}",
+			Recepient = $"ran{m}@dom.com",
+			Sender = $"dom{m}@ran.com",
+		}).ToList();
+	}
+}
