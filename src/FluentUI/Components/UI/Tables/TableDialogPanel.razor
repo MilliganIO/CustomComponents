@@ -1,5 +1,66 @@
-﻿<h3>TableDialogPanel</h3>
+﻿@typeparam TItem
+@using Microsoft.FluentUI.AspNetCore.Components
+@using FluentUI.Components.UI.Tables.Models
+
+@implements IDialogContentComponent<List<TableColumn<TItem>>>
+
+<FluentDialogHeader>
+	<FluentLabel Typo="Typography.H3">Show/Hide/Sort Columns</FluentLabel>
+</FluentDialogHeader>
+
+<FluentDialogBody>
+	<FluentMessageBarProvider @rendermode="RenderMode.InteractiveServer" Section="@App.MESSAGES_DIALOG" MaxMessageCount="1" />
+	<FluentGrid Justify="JustifyContent.FlexStart" Spacing="3">
+		<FluentGridItem xs="12" sm="6" lg="12">
+			<FluentSortableList Id="sortableColumnList" Handle="true" Items="Content" OnUpdate="@SortList" Context="item">
+				<ItemTemplate>
+					<div class="sortable-grab">
+						<FluentIcon Value="@(new Icons.Regular.Size20.ArrowSort())" Color="FluentColor.Accent" />
+					</div>
+					<div class="sortable-item-content" style="flex-grow: 1;">
+						@item.Title
+					</div>
+					<div class="sortable-item-content" style="flex-shrink: 1;">
+						<FluentSwitch @bind-Value=@item.IsVisible></FluentSwitch>
+					</div>
+				</ItemTemplate>
+			</FluentSortableList>
+		</FluentGridItem>
+	</FluentGrid>
+	
+</FluentDialogBody>
 
 @code {
+	[Parameter]
+	public List<TableColumn<TItem>> Content { get; set; } = new();
 
+	private void SortList(FluentSortableListEventArgs args)
+	{
+		if (args is null || args.OldIndex == args.NewIndex)
+		{
+			return;
+		}
+
+		var oldIndex = args.OldIndex;
+		var newIndex = args.NewIndex;
+
+		var items = this.Content;
+		var itemToMove = items[oldIndex];
+		items.RemoveAt(oldIndex);
+
+		if (newIndex < items.Count)
+		{
+			items.Insert(newIndex, itemToMove);
+		}
+		else
+		{
+			items.Add(itemToMove);
+		}
+
+		//Resets the order of all items to match the new order in the list
+		foreach (var item in items)
+		{
+			item.SortOrder = items.IndexOf(item);
+		}
+	}
 }

@@ -2,24 +2,32 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="/" />
-    <ResourcePreloader />
-    <link rel="stylesheet" href="@Assets["app.css"]" />
-    <link rel="stylesheet" href="@Assets["FluentUI.styles.css"]" />
-    <script src="_content/Microsoft.FluentUI.AspNetCore.Components/js/loading-theme.js" type="text/javascript"></script>
-    <loading-theme storage-name="theme" random-color="true"></loading-theme>
-    <ImportMap />
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<base href="/" />
+	<ResourcePreloader />
+	<link rel="stylesheet" href="@Assets["app.css"]" />
+	<link rel="stylesheet" href="@Assets["FluentUI.styles.css"]" />
+	<script src="_content/Microsoft.FluentUI.AspNetCore.Components/js/loading-theme.js" type="text/javascript"></script>
+	<loading-theme storage-name="theme" random-color="true"></loading-theme>
+	<ImportMap />
+	<link rel="icon" type="image/png" href="favicon.png" />
+	<HeadOutlet />
 </head>
 
 <body>
-    <FluentDesignTheme Mode="DesignThemeModes.System" ></FluentDesignTheme>
-    <Routes />
-    <ReconnectModal />
-    <script src="@Assets["_framework/blazor.web.js"]"></script>
+	<FluentDesignTheme Mode="DesignThemeModes.System"></FluentDesignTheme>
+	<Routes />
+	<ReconnectModal />
+	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+	<script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
 
 </html>
+
+@code {
+	public const string MESSAGES_NOTIFICATION_CENTER = "NOTIFICATION_CENTER";
+	public const string MESSAGES_TOP = "TOP";
+	public const string MESSAGES_DIALOG = "DIALOG";
+	public const string MESSAGES_CARD = "CARD";
+}

@@ -18,6 +18,11 @@
         <FluentSpacer />
         <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor" target="_blank">About Blazor</a>
     </FluentFooter>
+    <FluentToastProvider @rendermode="RenderMode.InteractiveServer" />
+    <FluentDialogProvider @rendermode="RenderMode.InteractiveServer" />
+    <FluentTooltipProvider @rendermode="RenderMode.InteractiveServer" />
+    <FluentMessageBarProvider @rendermode="RenderMode.InteractiveServer" />
+    <FluentMenuProvider @rendermode="RenderMode.InteractiveServer" />
 </FluentLayout>
 
 <div id="blazor-error-ui" data-nosnippet>

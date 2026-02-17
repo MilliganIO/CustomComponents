@@ -1,5 +1,55 @@
-﻿<h3>CustomizableTable</h3>
+﻿@typeparam TItem
+
+@* Column Visibility Controls *@
+<div style="padding: 10px; min-width:800px;">
+    <FluentToolbar Id="toolbar-table" Style="width: 100%;">
+        <FluentButton Id="btnEditColumns" @onclick="@OpenPanel" Appearance="Appearance.Outline" IconStart="@(new Icons.Regular.Size16.Options())" slot="end">
+            Columns
+        </FluentButton>
+    </FluentToolbar>
+</div>
+
+<FluentDataGrid @ref="grid"
+                TItem="TItem"
+                Items="@Items"
+                GridTemplateColumns="@GridTemplateColumns"
+                Style="width: 100%"
+                ResizableColumns="true"
+                ResizeType="DataGridResizeType.Discrete"
+                HeaderCellAsButtonWithMenu=false
+                Pagination="@pagination">
+    @foreach (var column in VisibleColumns)
+    {
+        @if (column.Template != null)
+        {
+            var template = column.Template;
+            <TemplateColumn Title="@column.Title"
+                            Align="@column.Alignment"
+                            Class="@column.CssClass"
+                            Sortable="@column.Sortable"
+                            SortBy="@column.SortByExpression">
+                <ChildContent>
+                    @template(context)
+                </ChildContent>
+            </TemplateColumn>
+        }
+        else if (column.DisplayFunc != null)
+        {
+            var displayFunc = column.DisplayFunc;
+            <TemplateColumn Title="@column.Title"
+                            Align="@column.Alignment"
+                            Class="@column.CssClass"
+                            Sortable="@column.Sortable"
+                            SortBy="@column.SortByExpression">
+                <ChildContent>
+                    @displayFunc(context)
+                </ChildContent>
+            </TemplateColumn>
+        }
+    }
+</FluentDataGrid>
+<FluentPaginator State="@pagination" />
 
 @code {
-
+	
 }

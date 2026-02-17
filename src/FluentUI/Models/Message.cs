@@ -1,6 +1,6 @@
 ﻿namespace FluentUI.Models;
 
-public class Message
+public class Message: BaseEntity
 {
     public string Sender { get; set; } = string.Empty;
     public string Recepient { get; set; } = string.Empty;

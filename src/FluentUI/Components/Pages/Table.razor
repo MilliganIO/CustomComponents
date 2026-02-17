@@ -1,6 +1,15 @@
 ﻿@page "/tables"
 
+@using FluentUI.Components.UI.Tables
+@using FluentUI.Components.UI.Tables.Models
+
+@rendermode InteractiveServer
+
 <h3>Tables</h3>
+<FluentCard MinimalStyle="true">
+	<CustomizableTable TItem="Models.Message" Items="messages.AsQueryable()" Columns="columns" />
+</FluentCard>
+
 
 @code {
 	List<Models.Message> messages = new();
@@ -15,4 +24,48 @@
 			Sender = $"dom{m}@ran.com",
 		}).ToList();
 	}
+
+	private List<TableColumn<Models.Message>> columns => new List<TableColumn<Models.Message>>
+	{
+		TableColumn<Models.Message>.Create(
+			"Actions",
+			m => m.Id,
+			sortable: true,
+			width: "1fr"
+		),
+		TableColumn<Models.Message>.Create(
+			"From",
+			m => m.Sender,
+			sortable: true,
+			width: "1fr"
+		),
+		TableColumn<Models.Message>.Create(
+			"To",
+			m => m.Recepient,
+			sortable: true,
+			width: "1fr"
+		),
+		TableColumn<Models.Message>.Create(
+			"Message",
+			m => m.Body,
+			sortable: true,
+			width: "1fr"
+		),
+		new TableColumn<Models.Message>
+		{
+			Title = "Important",
+			Sortable = true,
+			Width = "1fr",
+			Template = context =>
+			@<FluentBadge Appearance="@(context.IsImportant? Appearance.Accent: Appearance.Neutral)">
+@(context.IsImportant ? "Important" : "Normal")
+</FluentBadge>
+		},
+		TableColumn<Models.Message>.Create(
+			"Sent On",
+			m => m.SentDate,
+			sortable: true,
+			width: "1fr"
+		)
+	};
 }
