@@ -1,38 +1,86 @@
 ﻿@typeparam TItem
 @using Microsoft.FluentUI.AspNetCore.Components
 @using FluentUI.Components.UI.Tables.Models
+@inject IMessageService MessageService
 
 @implements IDialogContentComponent<List<TableColumn<TItem>>>
 
 <FluentDialogHeader>
-	<FluentLabel Typo="Typography.H3">Show/Hide/Sort Columns</FluentLabel>
+	<FluentLabel Typo="Typography.H3">edit Columns</FluentLabel>
 </FluentDialogHeader>
 
 <FluentDialogBody>
-	<FluentMessageBarProvider @rendermode="RenderMode.InteractiveServer" Section="@App.MESSAGES_DIALOG" MaxMessageCount="1" />
-	<FluentGrid Justify="JustifyContent.FlexStart" Spacing="3">
-		<FluentGridItem xs="12" sm="6" lg="12">
-			<FluentSortableList Id="sortableColumnList" Handle="true" Items="Content" OnUpdate="@SortList" Context="item">
-				<ItemTemplate>
-					<div class="sortable-grab">
-						<FluentIcon Value="@(new Icons.Regular.Size20.ArrowSort())" Color="FluentColor.Accent" />
-					</div>
-					<div class="sortable-item-content" style="flex-grow: 1;">
-						@item.Title
-					</div>
-					<div class="sortable-item-content" style="flex-shrink: 1;">
-						<FluentSwitch @bind-Value=@item.IsVisible></FluentSwitch>
-					</div>
-				</ItemTemplate>
-			</FluentSortableList>
-		</FluentGridItem>
-	</FluentGrid>
-	
+	<FluentMessageBarProvider Section="MESSAGES_COLUMNEDIT" Format="MessageFormat.Notification" />
+	@* @if (showResetMessage)
+	{
+		<FluentMessageBar Intent="MessageIntent.Success" Style="margin-bottom: 12px;">
+			Column settings have been reset to previous state.
+		</FluentMessageBar>
+	} *@
+
+	@if (Content != null)
+	{
+		<FluentSortableList Items="Content" OnUpdate="@SortList">
+			<ItemTemplate>
+				@{
+					var column = context;
+					var isLastVisible = Content.Count(c => c.IsVisible) == 1 && column.IsVisible;
+					var opacity = isLastVisible ? "0.5" : "1";
+					var cursor = isLastVisible ? "not-allowed" : "pointer";
+				}
+				<div class="sortable-grab">
+					<FluentIcon Value="@(new Icons.Regular.Size20.ArrowSort())" />
+				</div>
+				<div class="sortable-item-content" style="flex-grow: 1;">
+					<FluentStack Orientation="FluentOrientation.Horizontal"
+								 VerticalAlignment="VerticalAlignment.Center"
+								 Style="@($"padding: 8px; border-radius: 4px; opacity: {opacity}; gap: 4px;")">
+                    
+						@* Visibility toggle *@
+						<FluentStack Orientation="FluentOrientation.Horizontal"
+									 VerticalAlignment="VerticalAlignment.Center"
+									 Style="@($"cursor: {cursor}; flex: 1; justify-content: space-between;")"
+									 @onclick="@(() => ToggleColumn(column))">
+							<FluentLabel>@column.Title</FluentLabel>
+							@if (column.IsVisible)
+							{
+								<FluentIcon Value="@(new Icons.Regular.Size20.Eye())" Color="FluentColor.Accent" />
+							}
+							else
+							{
+								<FluentIcon Value="@(new Icons.Regular.Size20.EyeOff())" Color="FluentColor.Neutral" />
+							}
+						</FluentStack>
+					</FluentStack>
+				</div>
+				
+			</ItemTemplate>
+		</FluentSortableList>
+	}
 </FluentDialogBody>
+
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Accent" OnClick="@SaveAsync">Save</FluentButton>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@ResetAsync">Reset</FluentButton>
+</FluentDialogFooter>
 
 @code {
 	[Parameter]
 	public List<TableColumn<TItem>> Content { get; set; } = new();
+
+	[CascadingParameter]
+	public FluentDialog? Dialog { get; set; }
+
+	private List<(TableColumn<TItem> Column, bool IsVisible, int OriginalIndex)>? _previousState;
+
+	protected override void OnInitialized()
+	{
+		// Store original state for reset functionality
+		if (Content != null)
+		{
+			_previousState = Content.Select((col, index) => (col, col.IsVisible, index)).ToList();
+		}
+	}
 
 	private void SortList(FluentSortableListEventArgs args)
 	{
@@ -62,5 +110,53 @@
 		{
 			item.SortOrder = items.IndexOf(item);
 		}
+	}
+
+	private void ToggleColumn(TableColumn<TItem> column)
+	{
+		// Prevent hiding the last visible column
+		if (Content != null && Content.Count(c => c.IsVisible) == 1 && column.IsVisible)
+		{
+			return;
+		}
+
+		column.IsVisible = !column.IsVisible;
+	}
+
+	private async Task SaveAsync()
+	{
+		await Dialog!.CloseAsync(Content);
+	}
+
+	private async Task ResetAsync()
+	{
+		if (Content != null && _previousState != null)
+		{
+			// Restore visibility
+			foreach (var state in _previousState)
+			{
+				state.Column.IsVisible = state.IsVisible;
+			}
+
+			// Restore original order
+			Content.Clear();
+			foreach (var state in _previousState.OrderBy(s => s.OriginalIndex))
+			{
+				Content.Add(state.Column);
+			}
+			MessageService.Clear("MESSAGES_COLUMNEDIT");
+			// Show success message
+			MessageService.ShowMessageBar(options =>
+					{
+						options.Intent = MessageIntent.Error;
+						options.Title = "Validation error";
+						options.Body = "Must have at least 1 column visible.";
+						options.Timestamp = DateTime.Now;
+						options.Section = "MESSAGES_COLUMNEDIT";
+					});
+			StateHasChanged();
+		}
+        
+		// await Dialog!.CloseAsync();
 	}
 }

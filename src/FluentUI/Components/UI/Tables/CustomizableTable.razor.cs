@@ -43,30 +43,8 @@ public partial class CustomizableTable<TItem>
         _dialog = await DialogService.ShowPanelAsync<TableDialogPanel<TItem>>(Columns, new DialogParameters()
         {
             Alignment = HorizontalAlignment.Right,
-            Title = $"Show/Hide & Sort Columns",
-            PrimaryAction = "Save",
-            SecondaryAction = "Cancel",
+            Width = "600px",
             PreventDismissOnOverlayClick = true,
-            ValidateDialogAsync = async () =>
-            {
-                var result = Columns.Any(c => c.IsVisible);
-
-                if (!result)
-                {
-                    Console.WriteLine("Panel cannot be closed because of validation errors.");
-
-                    MessageService.ShowMessageBar(options =>
-                    {
-                        options.Intent = MessageIntent.Error;
-                        options.Title = "Validation error";
-                        options.Body = "Must have at least 1 column visible.";
-                        options.Timestamp = DateTime.Now;
-                        options.Section = App.MESSAGES_DIALOG;
-                    });
-                }
-
-                return result;
-            }
         });
 
         DialogResult result = await _dialog.Result;
