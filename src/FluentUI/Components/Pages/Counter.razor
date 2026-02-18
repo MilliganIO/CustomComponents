@@ -1,13 +1,15 @@
 ﻿@page "/counter"
 @rendermode InteractiveServer
+@inject IMessageService MessageService
 
 <PageTitle>Counter</PageTitle>
+<FluentMessageBarProvider Section="COUNTER_MESSAGES" @rendermode="InteractiveServer" />
 
 <h1>Counter</h1>
 
 <p role="status">Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<FluentButton Appearance="Appearance.Outline" OnClick="IncrementCount">Click Me</FluentButton>
 
 @code {
     private int currentCount = 0;
@@ -15,5 +17,42 @@
     private void IncrementCount()
     {
         currentCount++;
+        MessageService.Clear("COUNTER_MESSAGES");
+        MessageService.ShowMessageBar(options =>
+        {
+            options.Intent = MessageIntent.Success;
+            options.Title = "Success Title";
+            options.Body = "Success Body data";
+            options.AllowDismiss = false;
+            options.Section = "COUNTER_MESSAGES";
+            options.Timestamp = DateTime.UtcNow;
+        });
+        MessageService.ShowMessageBar(options =>
+        {
+            options.Intent = MessageIntent.Error;
+            options.Title = "Error Title";
+            options.Body = "Error Body data";
+            options.AllowDismiss = false;
+            options.Section = "COUNTER_MESSAGES";
+            options.Timestamp = DateTime.UtcNow;
+        });
+        MessageService.ShowMessageBar(options =>
+        {
+            options.Intent = MessageIntent.Info;
+            options.Title = "Info Title";
+            options.Body = "Info Body data";
+            options.AllowDismiss = false;
+            options.Section = "COUNTER_MESSAGES";
+            options.Timestamp = DateTime.UtcNow;
+        });
+        MessageService.ShowMessageBar(options =>
+        {
+            options.Intent = MessageIntent.Warning;
+            options.Title = "Warning Title";
+            options.Body = "Warning Body data";
+            options.AllowDismiss = false;
+            options.Section = "COUNTER_MESSAGES";
+            options.Timestamp = DateTime.UtcNow;
+        });
     }
 }
