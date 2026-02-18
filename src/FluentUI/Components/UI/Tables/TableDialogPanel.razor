@@ -11,13 +11,7 @@
 
 <FluentDialogBody>
 	<FluentMessageBarProvider Section="MESSAGES_COLUMNEDIT" Format="MessageFormat.Notification" />
-	@* @if (showResetMessage)
-	{
-		<FluentMessageBar Intent="MessageIntent.Success" Style="margin-bottom: 12px;">
-			Column settings have been reset to previous state.
-		</FluentMessageBar>
-	} *@
-
+	
 	@if (Content != null)
 	{
 		<FluentSortableList Items="Content" OnUpdate="@SortList">
